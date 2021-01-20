@@ -187,6 +187,7 @@ public class MarchingCubes : MonoBehaviour
     List<int> indexes = new List<int>();
     Vector3[] verts;
     int[] indexs;
+    double t = 0;
 
     void createTriangle(Vector3[] triVerts)
     {
@@ -231,13 +232,13 @@ public class MarchingCubes : MonoBehaviour
                     //Debug.Log(Mathf.Sin(j / 10.0f));
                     //Debug.Log(Mathf.PerlinNoise(i / 10.0f, j / 10.0f));
 
-                    double scale = 0.1;
-                    data[i][j][k] = (float)NoiseS3D.Noise(i * scale, j * scale, k * scale);
-                    Debug.Log(data[i][j][k]);
-                    //int x = i - size / 2;
-                    //int y = j - size / 2;
-                    //int z = k - size / 2;
-                    //data[i][j][k] = (30 -  (x * x + y * y + z * z))/(float)(size/4);
+                    //double scale = 0.03;
+                    //data[i][j][k] = (float)NoiseS3D.Noise((i+transform.position.x) * scale, (j + transform.position.y) * scale, (k + transform.position.z) * scale, t);
+                    //Debug.Log(data[i][j][k]);
+                    int x = i - size / 2;
+                    int y = j - size / 2;
+                    int z = k - size / 2;
+                    data[i][j][k] = (30 - (x * x + y * y + z * z)) / (float)(size / 4);
                     //Debug.Log(data[i][j][k]);
                     //data[i][j][k] = -0.5f;
                     //data[i][j][k] = k > 5 ? -0.5f : 0.5f;
@@ -286,6 +287,8 @@ public class MarchingCubes : MonoBehaviour
 
         verts = vertices.ToArray();
         indexs = indexes.ToArray();
+        vertices = new List<Vector3>();
+        indexes = new List<int>();
         mesh = new Mesh();
         mesh.vertices = verts;
         mesh.triangles = indexs;
@@ -297,13 +300,13 @@ public class MarchingCubes : MonoBehaviour
         Debug.Log(mesh.vertices.Length);
         Debug.Log(mesh.triangles.Length);
 
-        mesh.MarkModified();
-        mesh.RecalculateTangents();
+        //mesh.MarkModified();
+        //mesh.RecalculateTangents();
 
 
-
-        mesh.RecalculateBounds();
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        
 
         GetComponent<MeshFilter>().mesh = mesh;
 
@@ -313,7 +316,8 @@ public class MarchingCubes : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Start();
+        t += Time.deltaTime * 0.2;
     }
 
     private static readonly int[,] TriangleConnectionTable = new int[,]
